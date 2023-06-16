@@ -1,6 +1,11 @@
 <template>
     <div class = "custom-checkbox">
-        <input type = "checkbox" v-bind:id = "id" v-bind:checked = "isDone" />
+        <input 
+        type = "checkbox" 
+        class = "checkbox"
+        v-bind:id = "id" 
+        v-bind:checked = "isDone" 
+        v-on:change = "$emit('checkbox-changed')" />
         <label v-bind:for = "id">{{ label }}</label>
     </div>
 </template>
