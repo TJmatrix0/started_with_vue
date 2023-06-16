@@ -9,7 +9,10 @@
         v-bind:label = "item.label" 
         v-bind:done = "item.done" 
         v-bind:id = "item.id"
-        v-on:checkbox-changed = "updateDoneStatus(item.id)">
+        v-on:checkbox-changed = "updateDoneStatus(item.id)"
+        v-on:item-deleted = "deleteToDo(item.id)"
+        v-on:item-edited = "editToDo(item.id, $event)"
+        >
       </to-do-item>
       </li>
     </ul>
@@ -46,6 +49,14 @@ export default {
     updateDoneStatus(toDoId) {
       const toDoToUpdate = this.ToDoItems.find((item) => item.id === toDoId)
       toDoToUpdate.done = !toDoToUpdate.done
+    },
+    deleteToDo(toDoId) {
+      const itemIndex = this.ToDoItems.findIndex((item) => item.id === toDoId);
+      this.ToDoItems.splice(itemIndex, 1);
+    },
+    editToDo(toDoId, newLabel) {
+      const toDoToEdit = this.ToDoItems.find((item) => item.id === toDoId);
+      toDoToEdit.label = newLabel;
     }
   },
   computed: {

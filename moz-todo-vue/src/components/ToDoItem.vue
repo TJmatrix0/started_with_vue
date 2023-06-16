@@ -1,18 +1,40 @@
 <template>
-    <div class = "custom-checkbox">
-        <input 
-        type = "checkbox" 
-        class = "checkbox"
-        v-bind:id = "id" 
-        v-bind:checked = "isDone" 
-        v-on:change = "$emit('checkbox-changed')" />
-        <label v-bind:for = "id">{{ label }}</label>
+    <div class = "stack-small" v-if = "!isEditing">
+        <div class = "custom-checkbox">
+            <input 
+            type = "checkbox" 
+            class = "checkbox"
+            v-bind:id = "id" 
+            v-bind:checked = "isDone" 
+            v-on:change = "$emit('checkbox-changed')" />
+            <label v-bind:for = "id">{{ label }}</label>
+        </div>
+        <div class = "btn-group">
+            <button type = "button" class = "btn" v-on:click = "toggleToItemEditForm">
+                Edit <span class = "visually-hidden">{{ label }}</span>
+            </button>
+            <button type = "button" class = "btn btn__danger" v-on:click = "deleteToDo">
+                Delete <span class = "visually-hidden">{{  label }}</span>
+            </button>
+        </div>
     </div>
+    
+    <to-do-item-edit-form v-else 
+    v-bind:id = "id" 
+    v-bind:label = "label"
+    v-on:item-edited = "itemEdited"
+    v-on:edit-cancelled = "editCancelled"
+    >
+    </to-do-item-edit-form>
 </template>
 
 <script>
+    import ToDoItemEditForm from './ToDoItemEditForm.vue';
 
     export default {
+        components: {
+            ToDoItemEditForm
+        },
         props: {
             label: {required: true, type: String},
             done: {default: false, type: Boolean},
@@ -20,9 +42,29 @@
         },
         data() {
             return {
-                isDone: this.done,
+                isEditing: false,
             };
         },
+        methods: {
+            deleteToDo() {
+                this.$emit("item-deleted");
+            },
+            toggleToItemEditForm() {
+                this.isEditing = true;
+            },
+            itemEdited(newLabel) {
+                this.$emit('item-edited', newLabel);
+                this.isEditing = false;
+            },
+            editCancelled() {
+                this.isEditing = false;
+            }
+        },
+        computed: {
+            isDone() {
+                return this.done;
+            }
+        }
     };
 </script>
 
